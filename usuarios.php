@@ -79,7 +79,7 @@ $usuarios = $pdo->query("SELECT * FROM usuarios ORDER BY data_cadastro DESC")->f
                         <td><?= htmlspecialchars($u['nome']) ?></td>
                         <td><?= htmlspecialchars($u['email']) ?></td>
                         <td>
-                            <a href="?excluir=<?= $u['id'] ?>" class="text-danger" onclick="return confirm('Deseja excluir este usuário? As tarefas dele também serão apagadas.');"><i class="fas fa-trash"></i></a>
+                            <a href="?excluir=<?= $u['id'] ?>" class="text-danger" data-confirm="Deseja excluir este usuário? As tarefas dele também serão apagadas."><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

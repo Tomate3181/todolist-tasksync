@@ -133,3 +133,64 @@ document.addEventListener('DOMContentLoaded', () => {
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 });
+
+// ============================================
+// Custom Confirm Modal Interceptor
+// ============================================
+function customConfirm(message, callback) {
+    const overlay = document.createElement('div');
+    overlay.className = 'custom-modal-overlay';
+    
+    const modal = document.createElement('div');
+    modal.className = 'custom-modal glass';
+    
+    modal.innerHTML = `
+        <div class="custom-modal-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="custom-modal-content">
+            <h3>Atenção</h3>
+            <p>${message}</p>
+        </div>
+        <div class="custom-modal-actions">
+            <button class="btn btn-secondary cancel-btn">Cancelar</button>
+            <button class="btn btn-primary confirm-btn" style="background: #ef4444; border-color: #ef4444;">Confirmar</button>
+        </div>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Animate in
+    setTimeout(() => overlay.classList.add('active'), 10);
+    
+    const fechar = () => {
+        overlay.classList.remove('active');
+        setTimeout(() => overlay.remove(), 300);
+    };
+    
+    modal.querySelector('.cancel-btn').addEventListener('click', () => {
+        fechar();
+        callback(false);
+    });
+    
+    modal.querySelector('.confirm-btn').addEventListener('click', () => {
+        fechar();
+        callback(true);
+    });
+}
+
+document.addEventListener('click', function(e) {
+    const confirmElement = e.target.closest('[data-confirm]');
+    if (confirmElement) {
+        e.preventDefault();
+        const message = confirmElement.getAttribute('data-confirm');
+        const href = confirmElement.getAttribute('href');
+        
+        customConfirm(message, (confirmed) => {
+            if (confirmed && href) {
+                window.location.href = href;
+            }
+        });
+    }
+});

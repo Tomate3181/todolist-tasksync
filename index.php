@@ -80,7 +80,7 @@ foreach ($tarefas as $t) {
                                         <?php endif; ?>
                                     </div>
                                     <a href="tarefas.php?editar=<?= $tarefa['id'] ?>" title="Editar"><i class="fas fa-edit"></i></a>
-                                    <a href="tarefas.php?excluir=<?= $tarefa['id'] ?>" title="Excluir" onclick="return confirm('Tem certeza?');"><i class="fas fa-trash"></i></a>
+                                    <a href="tarefas.php?excluir=<?= $tarefa['id'] ?>" title="Excluir" data-confirm="Tem certeza que deseja excluir esta tarefa?"><i class="fas fa-trash"></i></a>
                                 </div>
                             </div>
                         </div>

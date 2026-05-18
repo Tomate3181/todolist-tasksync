@@ -9,7 +9,7 @@ if (isset($_GET['mover']) && isset($_GET['novo_status'])) {
     if (in_array($novo_status, ['a fazer', 'fazendo', 'concluído'])) {
         $stmt = $pdo->prepare("UPDATE tarefas SET status = ? WHERE id = ?");
         $stmt->execute([$novo_status, $id_mover]);
-        header("Location: index.php");
+        header("Location: index.php?msg=tarefa_movida&para=" . urlencode($novo_status));
         exit;
     }
 }
@@ -90,6 +90,7 @@ foreach ($tarefas as $t) {
         <?php endforeach; ?>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>

@@ -20,13 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['salvar'])) {
             $id = $_POST['id'];
             $stmt = $pdo->prepare("UPDATE tarefas SET usuario_id=?, descricao=?, setor=?, prioridade=? WHERE id=?");
             $stmt->execute([$usuario_id, $descricao, $setor, $prioridade, $id]);
-            header("Location: index.php");
+            header("Location: index.php?msg=tarefa_salva");
             exit;
         } else {
             // Inserção nova tarefa
             $stmt = $pdo->prepare("INSERT INTO tarefas (usuario_id, descricao, setor, prioridade) VALUES (?, ?, ?, ?)");
             $stmt->execute([$usuario_id, $descricao, $setor, $prioridade]);
-            header("Location: index.php");
+            header("Location: index.php?msg=tarefa_salva");
             exit;
         }
     }
@@ -37,7 +37,7 @@ if (isset($_GET['excluir'])) {
     $id = $_GET['excluir'];
     $stmt = $pdo->prepare("DELETE FROM tarefas WHERE id = ?");
     $stmt->execute([$id]);
-    header("Location: index.php");
+    header("Location: index.php?msg=tarefa_excluida");
     exit;
 }
 
@@ -122,5 +122,6 @@ $usuarios = $pdo->query("SELECT id, nome FROM usuarios")->fetchAll(PDO::FETCH_AS
             </form>
         </div>
     </main>
+    <script src="js/script.js"></script>
 </body>
 </html>

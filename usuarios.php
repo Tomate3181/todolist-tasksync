@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['cadastrar'])) {
     
     $stmt = $pdo->prepare("INSERT INTO usuarios (nome, email) VALUES (?, ?)");
     $stmt->execute([$nome, $email]);
-    header("Location: usuarios.php?sucesso=1");
+    header("Location: usuarios.php?msg=usuario_cadastrado");
     exit;
 }
 
@@ -17,7 +17,7 @@ if (isset($_GET['excluir'])) {
     $id = $_GET['excluir'];
     $stmt = $pdo->prepare("DELETE FROM usuarios WHERE id = ?");
     $stmt->execute([$id]);
-    header("Location: usuarios.php");
+    header("Location: usuarios.php?msg=usuario_excluido");
     exit;
 }
 
@@ -87,5 +87,6 @@ $usuarios = $pdo->query("SELECT * FROM usuarios ORDER BY data_cadastro DESC")->f
             </table>
         </div>
     </main>
+    <script src="js/script.js"></script>
 </body>
 </html>

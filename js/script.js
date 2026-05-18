@@ -26,6 +26,8 @@ function drop(ev, novoStatus) {
     if (cardsList) {
         cardsList.appendChild(cardElement);
         
+        atualizarContadores();
+
         // Chamada Assíncrona para atualizar BD no PHP
         atualizarStatusBackend(taskId, novoStatus);
         
@@ -33,6 +35,16 @@ function drop(ev, novoStatus) {
             dispararConfete();
         }
     }
+}
+
+function atualizarContadores() {
+    document.querySelectorAll('.column').forEach(column => {
+        const count = column.querySelectorAll('.card').length;
+        const badge = column.querySelector('.column-header .badge');
+        if (badge) {
+            badge.textContent = count;
+        }
+    });
 }
 
 function atualizarStatusBackend(id, status) {

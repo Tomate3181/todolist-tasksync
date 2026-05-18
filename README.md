@@ -28,31 +28,13 @@ Siga o passo a passo abaixo para rodar o projeto na sua máquina utilizando o **
 
 ### 3. Acessando o Sistema
 1. Abra uma nova aba no seu navegador e acesse a URL da aplicação: [http://localhost/tasksync-php](http://localhost/tasksync-php)
-2. Você será redirecionado automaticamente para a tela de **Login**.
-
----
-
-## 🔐 Usuários para Teste
-
-O sistema foi implementado com um controle de acessos (login restrito) contendo dois níveis de permissões. Utilize as credenciais abaixo para testar as funcionalidades:
-
-### 👑 Perfil Administrador
-Tem acesso total ao sistema. Pode visualizar, editar, mover ou excluir **todas as tarefas** (mesmo as criadas por outros), além de ter a permissão exclusiva de acessar a aba de **Cadastrar Usuários**.
-- **E-mail:** `admin@tasksync.com`
-- **Senha:** `123456`
-
-### 👤 Perfil Comum
-Possui acesso ao quadro de tarefas. Pode visualizar todas as atividades, no entanto só tem permissão para **editar, excluir ou movimentar as tarefas que ele mesmo cadastrou**. Usuários comuns não podem acessar as configurações de outros usuários.
-- **E-mail:** `joao@tasksync.com`
-- **Senha:** `123456`
-
-*(Temos também a usuária `maria@tasksync.com` que utiliza a mesma senha `123456`, útil para testar os conflitos de permissão entre contas comuns na manipulação das tarefas).*
 
 ---
 
 ## ✨ Funcionalidades Principais Inclusas
-- [x] Login e autenticação segura com senhas protegidas por Hash (BCRYPT).
-- [x] Restrição de Views e de Ações no PHP baseadas no Perfil de Acesso do usuário logado.
+- [x] CRUD completo de Usuários e Tarefas em PHP.
+- [x] Ausência de autenticação obrigatória (Acesso livre), facilitando avaliação e testes diretos de CRUD.
 - [x] Quadro interativo no estilo Trello/Kanban usando as colunas ("A Fazer", "Fazendo", "Concluído").
-- [x] Alternância da coluna de status usando botões laterais no card e também via *Drag and Drop* integrado com o sistema PHP.
-- [x] Interface 100% responsiva (Desktop, Tablets e Smartphones) criada focada no tema Elegant Dark.
+- [x] Alternância da coluna de status usando botões laterais no card e também via *Drag and Drop* integrado com o sistema PHP usando fetch.
+- [x] Interface 100% responsiva (Desktop, Tablets e Smartphones) focada no tema Elegant Dark.
+

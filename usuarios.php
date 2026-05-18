@@ -1,24 +1,13 @@
 <?php
 require 'config.php';
 
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login.php");
-    exit;
-}
-
-if ($_SESSION['usuario_perfil'] !== 'admin') {
-    die("Acesso negado. Apenas administradores podem acessar esta página.");
-}
-
 // Inserir novo usuário
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['cadastrar'])) {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
-    $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
-    $perfil = $_POST['perfil'] ?? 'comum';
     
-    $stmt = $pdo->prepare("INSERT INTO usuarios (nome, email, senha, perfil) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$nome, $email, $senha, $perfil]);
+    $stmt = $pdo->prepare("INSERT INTO usuarios (nome, email) VALUES (?, ?)");
+    $stmt->execute([$nome, $email]);
     header("Location: usuarios.php?sucesso=1");
     exit;
 }
@@ -51,7 +40,6 @@ $usuarios = $pdo->query("SELECT * FROM usuarios ORDER BY data_cadastro DESC")->f
             <li><a href="index.php">Kanban</a></li>
             <li><a href="usuarios.php" class="active">Usuários</a></li>
             <li><a href="tarefas.php">Tarefas</a></li>
-            <li><a href="logout.php" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
         </ul>
     </nav>
 
@@ -69,19 +57,6 @@ $usuarios = $pdo->query("SELECT * FROM usuarios ORDER BY data_cadastro DESC")->f
                         <input type="email" name="email" required placeholder="Ex: ana@empresa.com">
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Senha</label>
-                        <input type="password" name="senha" required placeholder="Digite uma senha forte">
-                    </div>
-                    <div class="form-group">
-                        <label>Perfil</label>
-                        <select name="perfil" required>
-                            <option value="comum">Comum</option>
-                            <option value="admin">Administrador</option>
-                        </select>
-                    </div>
-                </div>
                 <button type="submit" name="cadastrar" class="btn btn-primary">Cadastrar</button>
             </form>
         </div>
@@ -94,7 +69,6 @@ $usuarios = $pdo->query("SELECT * FROM usuarios ORDER BY data_cadastro DESC")->f
                         <th>ID</th>
                         <th>Nome</th>
                         <th>E-mail</th>
-                        <th>Perfil</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -104,11 +78,8 @@ $usuarios = $pdo->query("SELECT * FROM usuarios ORDER BY data_cadastro DESC")->f
                         <td><?= $u['id'] ?></td>
                         <td><?= htmlspecialchars($u['nome']) ?></td>
                         <td><?= htmlspecialchars($u['email']) ?></td>
-                        <td><span class="badge" style="background: rgba(255,255,255,0.2)"><?= ucfirst($u['perfil']) ?></span></td>
                         <td>
-                            <?php if ($u['id'] !== $_SESSION['usuario_id']): ?>
                             <a href="?excluir=<?= $u['id'] ?>" class="text-danger" onclick="return confirm('Deseja excluir este usuário? As tarefas dele também serão apagadas.');"><i class="fas fa-trash"></i></a>
-                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

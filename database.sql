@@ -5,8 +5,6 @@ CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    senha VARCHAR(255) NOT NULL,
-    perfil ENUM('admin', 'comum') DEFAULT 'comum',
     data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -21,14 +19,13 @@ CREATE TABLE tarefas (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
--- Inserindo usuários de teste (A senha para todos é: 123456)
-INSERT INTO usuarios (nome, email, senha, perfil) VALUES 
-('Admin Geral', 'admin@tasksync.com', '123456', 'admin'),
-('João Silva', 'joao@tasksync.com', '123456', 'comum'),
-('Maria Santos', 'maria@tasksync.com', '123456', 'comum');
+-- Inserindo usuários de teste
+INSERT INTO usuarios (nome, email) VALUES 
+('João Silva', 'joao@tasksync.com'),
+('Maria Santos', 'maria@tasksync.com');
 
 -- Inserindo algumas tarefas de teste
 INSERT INTO tarefas (usuario_id, descricao, setor, prioridade, status) VALUES 
-(2, 'Criar landing page da nova campanha', 'Marketing', 'alta', 'a fazer'),
-(3, 'Atualizar servidores de banco de dados', 'TI', 'alta', 'fazendo');
+(1, 'Criar landing page da nova campanha', 'Marketing', 'alta', 'a fazer'),
+(2, 'Atualizar servidores de banco de dados', 'TI', 'alta', 'fazendo');
 

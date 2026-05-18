@@ -1,44 +1,29 @@
 <?php
 require 'config.php';
 
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login.php");
-    exit;
-}
-
 $tarefa_edit = null;
 $erro = '';
 
 // Salvar/Atualizar tarefa
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['salvar'])) {
+    $usuario_id = $_POST['usuario_id'] ?? '';
     $descricao = trim($_POST['descricao']);
     $setor = trim($_POST['setor']);
     $prioridade = trim($_POST['prioridade']);
     
     // Validação
-    if (empty($descricao) || empty($setor) || empty($prioridade)) {
-        $erro = "Todos os campos (Descrição, Setor e Prioridade) são obrigatórios, não podem estar vazios!";
+    if (empty($usuario_id) || empty($descricao) || empty($setor) || empty($prioridade)) {
+        $erro = "Todos os campos são obrigatórios, não podem estar vazios!";
     } else {
         if (!empty($_POST['id'])) {
             // Atualização
             $id = $_POST['id'];
-            
-            // Verifica permissão
-            $stmt = $pdo->prepare("SELECT usuario_id FROM tarefas WHERE id = ?");
-            $stmt->execute([$id]);
-            $tarefa = $stmt->fetch();
-            
-            if ($tarefa && ($_SESSION['usuario_perfil'] === 'admin' || $tarefa['usuario_id'] == $_SESSION['usuario_id'])) {
-                $stmt = $pdo->prepare("UPDATE tarefas SET descricao=?, setor=?, prioridade=? WHERE id=?");
-                $stmt->execute([$descricao, $setor, $prioridade, $id]);
-                header("Location: index.php");
-                exit;
-            } else {
-                $erro = "Você não tem permissão para alterar esta tarefa.";
-            }
+            $stmt = $pdo->prepare("UPDATE tarefas SET usuario_id=?, descricao=?, setor=?, prioridade=? WHERE id=?");
+            $stmt->execute([$usuario_id, $descricao, $setor, $prioridade, $id]);
+            header("Location: index.php");
+            exit;
         } else {
             // Inserção nova tarefa
-            $usuario_id = $_SESSION['usuario_id'];
             $stmt = $pdo->prepare("INSERT INTO tarefas (usuario_id, descricao, setor, prioridade) VALUES (?, ?, ?, ?)");
             $stmt->execute([$usuario_id, $descricao, $setor, $prioridade]);
             header("Location: index.php");
@@ -50,14 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['salvar'])) {
 // Exclusão via URL
 if (isset($_GET['excluir'])) {
     $id = $_GET['excluir'];
-    $stmt = $pdo->prepare("SELECT usuario_id FROM tarefas WHERE id = ?");
+    $stmt = $pdo->prepare("DELETE FROM tarefas WHERE id = ?");
     $stmt->execute([$id]);
-    $tarefa = $stmt->fetch();
-    
-    if ($tarefa && ($_SESSION['usuario_perfil'] === 'admin' || $tarefa['usuario_id'] == $_SESSION['usuario_id'])) {
-        $stmt = $pdo->prepare("DELETE FROM tarefas WHERE id = ?");
-        $stmt->execute([$id]);
-    }
     header("Location: index.php");
     exit;
 }
@@ -68,12 +47,10 @@ if (isset($_GET['editar'])) {
     $stmt = $pdo->prepare("SELECT * FROM tarefas WHERE id = ?");
     $stmt->execute([$id]);
     $tarefa_edit = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if ($tarefa_edit && $_SESSION['usuario_perfil'] !== 'admin' && $tarefa_edit['usuario_id'] != $_SESSION['usuario_id']) {
-        die("Você não tem permissão para editar esta tarefa.");
-    }
 }
 
+// Busca usuários para o Select
+$usuarios = $pdo->query("SELECT id, nome FROM usuarios")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -89,11 +66,8 @@ if (isset($_GET['editar'])) {
         <div class="logo"><i class="fas fa-layer-group"></i> TaskSync</div>
         <ul>
             <li><a href="index.php">Kanban</a></li>
-            <?php if ($_SESSION['usuario_perfil'] === 'admin'): ?>
             <li><a href="usuarios.php">Usuários</a></li>
-            <?php endif; ?>
             <li><a href="tarefas.php" class="active">Tarefas</a></li>
-            <li><a href="logout.php" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
         </ul>
     </nav>
 
@@ -109,6 +83,18 @@ if (isset($_GET['editar'])) {
 
             <form method="POST">
                 <input type="hidden" name="id" value="<?= $tarefa_edit ? $tarefa_edit['id'] : '' ?>">
+                
+                <div class="form-group">
+                    <label>Usuário Responsável</label>
+                    <select name="usuario_id" required>
+                        <option value="">Selecione...</option>
+                        <?php foreach ($usuarios as $u): ?>
+                            <option value="<?= $u['id'] ?>" <?= ($tarefa_edit && $tarefa_edit['usuario_id'] == $u['id']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($u['nome']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 
                 <div class="form-group">
                     <label>Descrição</label>
